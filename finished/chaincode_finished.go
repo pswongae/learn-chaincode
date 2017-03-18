@@ -131,6 +131,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return res, err
 	} else if function == "write" {											//writes a value to the chaincode state
 		return t.Write(stub, args)
+	} else if function == "writeTest" {											//writes a value to the chaincode state
+		return t.WriteTest(stub, args)
 	} else if function == "init_marble" {									//create a new marble
 		return t.init_marble(stub, args)
 	} else if function == "set_user" {										//change owner of a marble
@@ -230,6 +232,27 @@ func (t *SimpleChaincode) Delete(stub shim.ChaincodeStubInterface, args []string
 // Write - write variable into chaincode state
 // ============================================================================================================================
 func (t *SimpleChaincode) Write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var name, value string // Entities
+	var err error
+	fmt.Println("running write()")
+
+	if len(args) != 2 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the variable and value to set")
+	}
+
+	name = args[0]															//rename for funsies
+	value = args[1]
+	err = stub.PutState(name, []byte(value))								//write the variable into the chaincode state
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+// ============================================================================================================================
+// WriteTest - write variable into chaincode state
+// ============================================================================================================================
+func (t *SimpleChaincode) WriteTest(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var name, value string // Entities
 	var err error
 	fmt.Println("running write()")
